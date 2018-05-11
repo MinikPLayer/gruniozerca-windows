@@ -17,8 +17,8 @@ class Grunio
 public:
 	Sprite sprite;
 	Texture textura[ilosckolorwgrunia];
-	float grX;
-	float grY;
+	float x;
+	float y;
 	short kolor;
 };
 
@@ -1171,6 +1171,10 @@ int main()
 	Time czas;
 
 	Grunio grunio[2];
+	grunio[0].x = resX / 2;
+	grunio[0].y = resY - 220;
+	grunio[1].x = resX / 2;
+	grunio[1].y = resY - 220;
 
 	Sprite marchewka;
 	Sprite tlo;
@@ -1246,10 +1250,6 @@ int main()
 
 	grunio[0].sprite.setOrigin(grsizeX / 2, grsizeY / 2);
 	grunio[1].sprite.setOrigin(grsizeX / 2, grsizeY / 2);
-	float grX = resX / 2;
-	float grY = resY - 220;
-	float gr2X = resX / 2;
-	float gr2Y = resY - 220;
 	float marchX = 0;
 	float marchY = 0;
 	txt_tlo.loadFromFile("images/tlo.png");
@@ -1277,10 +1277,10 @@ int main()
 	pauza.setTexture(txt_pauza);
 	tlo.setTexture(txt_tlo);
 	grunio[0].sprite.setTexture(grunio[0].textura[grkolor]);
-	grunio[0].sprite.setPosition(grX, grY);
+	grunio[0].sprite.setPosition(grunio[0].x, grunio[0].y);
 
 	grunio[1].sprite.setTexture(grunio[1].textura[grkolor]);
-	grunio[1].sprite.setPosition(gr2X, gr2Y);
+	grunio[1].sprite.setPosition(grunio[1].x, grunio[1].y);
 
 	string string_pauza_wznow = "Wznow";
 	string string_pauza_restart = "Restart";
@@ -1323,8 +1323,8 @@ int main()
 	okno.setVerticalSyncEnabled(vsync);
 	okno.setFramerateLimit(maxfps);
 	przyspieszanie = przyspieszanie * skalaY;
-	grY = grY + (220 - (220 * skalaY));
-	gr2Y = gr2Y + (220 - (220 * skalaY));
+	grunio[0].y = grunio[0].y + (220 - (220 * skalaY));
+	grunio[1].y = grunio[1].y + (220 - (220 * skalaY));
 
 	short tickratetime = 50;
 
@@ -1394,27 +1394,27 @@ int main()
 			if (Keyboard::isKeyPressed(Keyboard::Right))
 			{
 				grunio[0].sprite.setScale(skalaX, skalaY);
-				grX = grX + (predkoscgr*czas.asMilliseconds());
+				grunio[0].x = grunio[0].x + (predkoscgr*czas.asMilliseconds());
 			}
 			if (Keyboard::isKeyPressed(Keyboard::Left))
 			{
 				grunio[0].sprite.setScale(-skalaX, skalaY);
-				grX = grX - (predkoscgr*czas.asMilliseconds());
+				grunio[0].x = grunio[0].x - (predkoscgr*czas.asMilliseconds());
 			}
 		}
 		zegar.restart().asSeconds();
-		if (grX < 0+(grsizeX/2)*skalaX) grX = 0+(grsizeX/2)*skalaX;
-		if (grX > resX-(grsizeX/2*skalaX)) grX = resX-(grsizeX/2*skalaX);
-		if (gr2X < 0 + (grsizeX / 2)*skalaX) gr2X = 0 + (grsizeX / 2)*skalaX;
-		if (gr2X > resX - (grsizeX / 2 * skalaX)) gr2X = resX - (grsizeX / 2 * skalaX);
+		if (grunio[0].x < 0+(grsizeX/2)*skalaX) grunio[0].x = 0+(grsizeX/2)*skalaX;
+		if (grunio[0].x > resX-(grsizeX/2*skalaX)) grunio[0].x = resX-(grsizeX/2*skalaX);
+		if (grunio[1].x < 0 + (grsizeX / 2)*skalaX) grunio[1].x = 0 + (grsizeX / 2)*skalaX;
+		if (grunio[1].x > resX - (grsizeX / 2 * skalaX)) grunio[1].x = resX - (grsizeX / 2 * skalaX);
 		if (pause == 0)
 		{
-			stworzmarchewke(marchewka, skalaX, skalaY, txt_marchewka, grX, stworzona, resX, marchX, marchY, predkoscmarchewki, mchkolor);
+			stworzmarchewke(marchewka, skalaX, skalaY, txt_marchewka, grunio[0].x, stworzona, resX, marchX, marchY, predkoscmarchewki, mchkolor);
 			if (sprawdzczyzjedzona(marchewka, grunio[0].sprite, stworzona, marchY, predkoscmarchewki, przyspieszanie, maxprmarchewki, grkolor, mchkolor, punkty, ciag))
 			{
 				zjedzona = 1;
 				dzwiek_zebraniemarchewki.play();
-				grXt = grX;
+				grXt = grunio[0].x;
 			}
 			if (sprawdzmarchewke(marchewka, skalaY, stworzona, marchY, resY, marchsizeY, predkoscmarchewki, przyspieszanie, maxprmarchewki, mchkolor, grkolor, ciag, ktoram, marchewkawziemi[ktoram], txt_marchewkawziemi, zycia))
 			{
@@ -1424,11 +1424,11 @@ int main()
 			ruszmarchewke(marchewka, skalaX, skalaY, stworzona, marchX, marchY, predkoscmarchewki, zegar, czas);
 			if (zjedzona == 1)
 			{
-				wyswietlzdobytepunkty(ciag, text_punktynadgr, klatkaanimacji_punktynadgr, maxfps, zjedzona, grXt, grY, skalaX, skalaY);
+				wyswietlzdobytepunkty(ciag, text_punktynadgr, klatkaanimacji_punktynadgr, maxfps, zjedzona, grXt, grunio[0].y, skalaX, skalaY);
 			}
 			pokazzycia(zycie, zycia, txt_zycie, txt_pusty, text_zycia);
 			sprawdzciag(ciag, zycia);
-			if (sprawdzczyzginales(zycia, stworzona, grunio[0].sprite, muzyka, klatkaanimacji_smierc, maxfps, grY, grX, grXt, text_gameover, klatkaanimacji_gameover, resY) == 1)
+			if (sprawdzczyzginales(zycia, stworzona, grunio[0].sprite, muzyka, klatkaanimacji_smierc, maxfps, grunio[0].y, grunio[0].x, grXt, text_gameover, klatkaanimacji_gameover, resY) == 1)
 			{
 				if (punkty > maxscore)
 				{
@@ -1437,10 +1437,10 @@ int main()
 					plikmscore << punkty;
 					plikmscore.close();
 				}
-				grX = resX / 2;
+				grunio[0].x = resX / 2;
 				grunio[0].sprite.setRotation(0);
-				grY = resY - 220;
-				grY = grY + (220 - (220 * skalaY));
+				grunio[0].y = resY - 220;
+				grunio[0].y = grunio[0].y + (220 - (220 * skalaY));
 				punkty = 0;
 				ciag = 0;
 				zycia = 3;
@@ -1454,8 +1454,8 @@ int main()
 		}
 
 
-		grunio[0].sprite.setPosition(grX, grY);
-		grunio[1].sprite.setPosition(gr2X, gr2Y);
+		grunio[0].sprite.setPosition(grunio[0].x, grunio[0].y);
+		grunio[1].sprite.setPosition(grunio[1].x, grunio[1].y);
 		wyswietlwynik(punkty, wynik, string_wynik);
 		if (zapauzowano == 1)
 		{
@@ -1468,7 +1468,7 @@ int main()
 			}
 			if (odpauzowac == 2)
 			{
-				grX = resX / 2;
+				grunio[0].x = resX / 2;
 				punkty = 0;
 				ciag = 0;
 				zycia = 3;
@@ -1513,22 +1513,22 @@ int main()
 		if ((sieciowy == 1) && (ticktime.asMilliseconds() > 50 ))
 		{
 			Packet packet;
-			packet << grX;
+			packet << grunio[0].x;
 			socket.send(packet, ipservera, portudpupload);
 			packet.clear();
 			socket.receive(packet, ipservera, portudpdownload);
 			cout << "UserID: " << userid << endl;
 			if (userid == 0)
 			{
-				packet >> przeciwnikjestwgrze >> czyjestwgrze >> grX >> gr2X;
+				packet >> przeciwnikjestwgrze >> czyjestwgrze >> grunio[0].x >> grunio[1].x;
 			}
 			else
-				packet >> przeciwnikjestwgrze >> czyjestwgrze >> gr2X >> grX;
+				packet >> przeciwnikjestwgrze >> czyjestwgrze >> grunio[1].x >> grunio[0].x;
 
 			packet >> pause >> marchX >> marchY >> mchkolor;
 
-			grunio[0].sprite.setPosition(grX, grY);
-			grunio[1].sprite.setPosition(gr2X, gr2Y);
+			grunio[0].sprite.setPosition(grunio[0].x, grunio[0].y);
+			grunio[1].sprite.setPosition(grunio[1].x, grunio[1].y);
 			tickrate.restart();
 			if (przeciwnikjestwgrze == 1)
 			{
