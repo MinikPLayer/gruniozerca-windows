@@ -6,4 +6,5 @@ Gruniozerca game ported to Windows using SFML C++ library ( Linux port is possib
 Original project: https://github.com/arhneu/gruniozerca
 
 Klient / Client: https://github.com/MinikPLayer/gruniozerca-windows/tree/klient
+
 Server: https://github.com/MinikPLayer/gruniozerca-windows/tree/server
