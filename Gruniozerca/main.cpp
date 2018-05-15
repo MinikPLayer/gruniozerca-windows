@@ -19,7 +19,10 @@ public:
 	Texture textura[ilosckolorwgrunia];
 	float x;
 	float y;
-	short kolor;
+	float xt;
+	UINT32 punkty = 0;
+	long int zycia = 3;
+	short kolor = 0;
 };
 
 
@@ -87,6 +90,10 @@ int plik(int & resX, int & resY, bool & fullscreen,short & maxfps, bool & vsync,
 			}
 			if (tworzyc == 1)
 			{
+				string str_resX;
+				string str_resY;
+				str_resX = to_string(VideoMode::getDesktopMode().width);
+				str_resY = to_string(VideoMode::getDesktopMode().height);
 				ofstream stworzcfg;		//Stwórz plik configu
 				stworzcfg.open("config.ini");
 				if (!stworzcfg.good())		//Brak uprawnieñ - wyœwietl komunikat
@@ -94,8 +101,8 @@ int plik(int & resX, int & resY, bool & fullscreen,short & maxfps, bool & vsync,
 					MessageBox(NULL, "Brak uprawnien do stworzenia pliku!", "Blad tworzenia pliku!", MB_OK | MB_ICONERROR);
 					return 2;
 				}
-				stworzcfg << "1920\n";
-				stworzcfg << "1080\n";
+				stworzcfg << str_resX + "\n";
+				stworzcfg << str_resY + "\n";
 				stworzcfg << "1\n";
 				stworzcfg << "60\n";
 				stworzcfg << "1\n";
@@ -106,8 +113,8 @@ int plik(int & resX, int & resY, bool & fullscreen,short & maxfps, bool & vsync,
 				stworzcfg << "/* OPIS */";
 				stworzcfg << "\n // 1: Rozdzielczosc X (px) - Nie zalecana jest ni¿sza ni¿ 1280x720\n // 2: Rozdzielczosc Y (px) - Nie zalecana jest ni¿sza ni¿ 1280x720\n // 3: Pelny ekran ( 0 - okno, 1 - pelny ekran )\n // 4: MAXFPS ( Domyslnie - 60. UWAGA! Zmiana tej wartosci na wieksza niz twoj komputer jest w stanie wygenerowac spowoduje spowolnienia! )\n // 5: VSync ( 0 - wylaczony, 1 - wlaczony )\n // 6: Predkosc startowa marchewek ( domyslnie 3 )\n // 7: Przyspieszenie marchewek ( domyslnie 0.25 )\n // 8: Max Predkosc marchewek ( domyslnie 9 )";
 			}
-			resX = 1920;
-			resY = 1080;
+			resX = VideoMode::getDesktopMode().width;
+			resY = VideoMode::getDesktopMode().height;
 			fullscreen = 1;
 			maxfps = 60;
 			vsync = 1;
@@ -352,7 +359,7 @@ short menu(int & resX, int & resY, bool & fullscreen, double skalaY, double skal
 			multiplayerbutton.setFillColor(Color::Blue);
 			if (mouse.isButtonPressed(Mouse::Left))
 			{
-				RectangleShape polewpisywania;
+				/*RectangleShape polewpisywania;
 				polewpisywania.setSize(Vector2f(1200 * skalaX, 100 * skalaY));
 				wycentrujkwadrat(polewpisywania, resX, resY, skalaY, skalaX, 65);
 				polewpisywania.setFillColor(Color::Black);
@@ -437,9 +444,11 @@ short menu(int & resX, int & resY, bool & fullscreen, double skalaY, double skal
 					okno.draw(text_wpisz_ip);
 					okno.draw(naglowekmultiplayer);
 					okno.display();
-				}
+				}*/
+				return 4;
 				
 			}
+				
 		}
 		else
 			multiplayerbutton.setFillColor(Color::White);
@@ -719,7 +728,7 @@ short menu(int & resX, int & resY, bool & fullscreen, double skalaY, double skal
 	}
 }
 
-void wyswietlwynik(unsigned long int punkty, Text & wynik, string string_wynik)
+void wyswietlwynik(UINT32 punkty, Text & wynik, string string_wynik)
 {
 	string_wynik = to_string(punkty);
 	string_wynik = "Punkty: " + string_wynik;
@@ -813,7 +822,7 @@ void wyswietlzdobytepunkty(short & ciag, Text & text_punktynadgr, int & klatkaan
 	animacjapunktownadgr(klatkaanimacji_punktynadgr, text_punktynadgr, maxfps, ciag, zjedzona, grX, grY, skalaX, skalaY);
 }
 
-void dodajpunkty(unsigned long int & punkty, short & ciag)
+void dodajpunkty(UINT32 & punkty, short & ciag)
 {
 	if (ciag == 0)
 		punkty += 10;
@@ -834,7 +843,7 @@ void dodajpunkty(unsigned long int & punkty, short & ciag)
 	ciag++;
 }
 
-bool sprawdzczyzjedzona(Sprite & marchewka, Sprite grunio, bool & stworzona, float & marchY, float & predkoscmarchewki, float przyspieszenie, int maxprmarchewki, short grkolor, short mchkolor, unsigned long int & punkty, short & ciag)
+bool sprawdzczyzjedzona(Sprite & marchewka, Sprite grunio, bool & stworzona, float & marchY, float & predkoscmarchewki, float przyspieszenie, int maxprmarchewki, short grkolor, short mchkolor, UINT32 & punkty, short & ciag)
 {
 	FloatRect grunioBOX = grunio.getGlobalBounds();
 	FloatRect MarchewkaBOX = marchewka.getGlobalBounds();
@@ -975,10 +984,13 @@ bool gameover(Text & text_gameover, int & klatkaanimacji_gameover, int maxfps)
 	else return 0;
 }
 
-bool sprawdzczyzginales(long int zycia, bool & stworzona, Sprite & grunio, Music & muzyka, int & klatkaanimacji_smierc, int maxfps, float & grY, float & grX, float & grXt, Text & text_gameover, int & klatkaanimacji_gameover, int resY)
+bool sprawdzczyzginales(long int zycia, bool & stworzona, Sprite & grunio, Music & muzyka, int & klatkaanimacji_smierc, int maxfps, float & grY, float & grX, float & grXt, Text & text_gameover, int & klatkaanimacji_gameover, int resY, Clock & zegaranimacjismierci, Time & czasanimacjismierci, float & czas)
 {
+	czasanimacjismierci = zegaranimacjismierci.getElapsedTime();
 	if (zycia < 0)
 	{
+		czas = czasanimacjismierci.asMilliseconds();
+		cout << "klatka: " << klatkaanimacji_smierc << " czas: " << czas << endl;
 		if (klatkaanimacji_smierc == 0)
 		{
 			grXt = grX;
@@ -986,24 +998,28 @@ bool sprawdzczyzginales(long int zycia, bool & stworzona, Sprite & grunio, Music
 		}
 		muzyka.stop();
 		stworzona = 0;
-		if (klatkaanimacji_smierc > 220 * 144 / maxfps && klatkaanimacji_smierc < 400 * 144 / maxfps)
+		//if (klatkaanimacji_smierc > 22 * czas && klatkaanimacji_smierc < 40 * czas)
+		if (czas > 2000 && czas < 3000 && grunio.getRotation() < 180)
 		{
-			grunio.setRotation(klatkaanimacji_smierc - (220 * 144 / maxfps));
+			grunio.setRotation((czas - 2000) / 5);
 		}
-		if (klatkaanimacji_smierc < 200 * 144 / maxfps && klatkaanimacji_smierc > 150 * 144 / maxfps)
+		//if (klatkaanimacji_smierc < 20 * czas && klatkaanimacji_smierc > 15 * czas)
+		if (czas < 2000 && czas > 1000)
 		{
-			grY += klatkaanimacji_smierc * -2 / maxfps;
+			grY -= czas / 1400 * (resY / 1080.f);
 		}
-		if (klatkaanimacji_smierc > 450 * 144 / maxfps)
+		//if (klatkaanimacji_smierc > 45 * czasanimacjismierci.asMicroseconds())
+		if (czas > 3500)
 		{
-			grY += klatkaanimacji_smierc * 3 / maxfps;
+			grY += czas / 100 * ( resY / 1080.f );
 		}
-		if (klatkaanimacji_smierc < 800 * 144 / maxfps && klatkaanimacji_smierc > 0)
+		//if (klatkaanimacji_smierc < 800 * czas && klatkaanimacji_smierc > 0)
+		if (czas < 140000)
 		{
 			klatkaanimacji_smierc++;
 			grX = grXt;
 		}
-		if (klatkaanimacji_smierc >= 600 / resY * 144 / maxfps)
+		if (klatkaanimacji_smierc >= 60 / resY * czas)
 		{
 			if (gameover(text_gameover, klatkaanimacji_gameover, maxfps) == 1)
 			{
@@ -1011,6 +1027,8 @@ bool sprawdzczyzginales(long int zycia, bool & stworzona, Sprite & grunio, Music
 			}
 		}
 	}
+	else
+		zegaranimacjismierci.restart();
 }
 
 short przyciskipauzy(Text & przycisk_pauza_wznow, Text & przycisk_pauza_restart, Text & przycisk_pauza_wyjscie, Vector2f mysz, bool sieciowy)
@@ -1074,16 +1092,15 @@ int main()
 	int klatkaanimacji_gameover = 0;
 	int klatkaanimacji_smierc = 0;
 	short odpauzowac = 0;	// Parametr okreœla, czy u¿ytkownik zapauzowa³ grê
-	long int zycia = 3;	// Iloœæ ¿yæ
-	float grXt = 0;
+	//long int zycia = 3;	// Iloœæ ¿yæ
 	int klatkaanimacji_punktynadgr = 0;	// Okreœla, która ,,klatka animacji" ma byæ wyœwietlona podczas wyœwietlania zdobytych punktów
-	bool zjedzona = 0;	// Czy marchewka jest zjedzona
+	bool zjedzona[2] = { 0,0 };	// Czy marchewka jest zjedzona
 	bool tworzyc = 0;	
 	int ktoram = 0;
-	short ciag = 0;	// Która z rzêdu zjedzona marchewka
-	unsigned long int punkty = 0;	// Iloœæ punktów
-	int resX = 1920;		//Rozdzielczoœæ ekranu X - domyœlna wartoœæ
-	int resY = 1080;		//Rozdzielczoœæ ekranu Y - domyœlna wartoœæ
+	short ciag[2] = { 0,0 };	// Która z rzêdu zjedzona marchewka
+	//UINT32 punkty[2] = { 0,0 };	// Iloœæ punktów
+	int resX = VideoMode::getDesktopMode().width;		//Rozdzielczoœæ ekranu X - domyœlna wartoœæ
+	int resY = VideoMode::getDesktopMode().height;		//Rozdzielczoœæ ekranu Y - domyœlna wartoœæ
 	double skalaX = resX / 1920.0;	// Skala ekranu w odniesieniu do FullHD w osi X
 	double skalaY = resY / 1080.0;	// Skala ekranu w odniesieniu do FullHD w osi Y
 	bool fullscreen = 0;		//Pe³ny ekran - domyœlna wartoœæ
@@ -1091,11 +1108,18 @@ int main()
 	bool vsync = 0;		//Synchronizacja pionowa - domyœlna wartoœæ
 	float maxprmarchewki = 9;	// Okreœla max prêdkoœæ jak¹ marchewka mo¿e osi¹gn¹æ
 	float przyspieszanie = 0.25;	// Okreœla jak szybko marchewka bêdzie zwiêkszaæ swoj¹ prêdkoœæ
-	float predkoscmarchewki = 3;	// Okreœla pocz¹tkow¹ prêdkoœæ marchewki
+	float predkoscmarchewki[2] = { 3, 3 };	// Okreœla pocz¹tkow¹ prêdkoœæ marchewki
 	float glosnosc = 50;	// G³oœnoœæ g³ówna gry
 	float glosnoscmuzyki = 100 * (glosnosc / 100);	// G³oœnoœæ muzyki
 	float glosnoscdzwiekow = 100 * (glosnosc / 100);	// G³oœnoœæ dŸwiêków
-	plik(resX, resY, fullscreen, maxfps, vsync, 1, 0, predkoscmarchewki, przyspieszanie, maxprmarchewki, tworzyc);
+
+	float czasanimacjismiercisuma = 0;
+
+	Clock zegaranimacjismierci[2];
+	Time czasanimacjismierci[2];
+
+	plik(resX, resY, fullscreen, maxfps, vsync, 1, 0, predkoscmarchewki[0], przyspieszanie, maxprmarchewki, tworzyc);
+	predkoscmarchewki[1] = predkoscmarchewki[0];
 	skalaX = resX / 1920.0;
 	skalaY = resY / 1080.0;
 	sf::SoundBuffer plik_dzwiek_dobrze;
@@ -1121,7 +1145,7 @@ int main()
 	UdpSocket socket;
 
 	RenderWindow oknoh(VideoMode(1, 1, 1),"1",Style::None);
-	switch (menu(resX, resY, fullscreen, skalaY, skalaX, fullscreen, vsync, maxfps, predkoscmarchewki, przyspieszanie, maxprmarchewki, tworzyc, ipservera, maxscore))
+	switch (menu(resX, resY, fullscreen, skalaY, skalaX, fullscreen, vsync, maxfps, predkoscmarchewki[0], przyspieszanie, maxprmarchewki, tworzyc, ipservera, maxscore))
 	{
 	case 1:
 	{
@@ -1143,8 +1167,8 @@ int main()
 	{
 		oknoh.close();
 		multiplayer = 1;
-		sieciowy = 1;
-		cout << "IP: " << ipservera << endl;
+		//sieciowy = 1;
+		//cout << "IP: " << ipservera << endl;
 		break;
 	}
 	case 10:
@@ -1159,9 +1183,8 @@ int main()
 	skalaY = resY / 1080.0;
 	bool pause = 0;	// Okreœla czy gra ma byæ zatrzymana czy ma dzia³aæ
 	bool zapauzowano = 0;	// Okreœla czy zapauzowano grê
-	short mchkolor = 0;	// Okreœla kolor marchewki
-	short grkolor = 0;	// Okreœla kolor grunia
-	bool stworzona = 0;		//czy marchewka jest ju¿ stworzona?
+	short mchkolor[2] = { 0,0 };	// Okreœla kolor marchewki	// Okreœla kolor grunia
+	bool stworzona[2] = { 0,0 };		//czy marchewka jest ju¿ stworzona?
 	short grsizeX = 96;		//Szerokoœæ tekstury grunia w px
 	short grsizeY = 68;		//Wysokoœæ tekstury grunia w px
 	short marchsizeX = 52;		//Szerokoœæ tekstury marchewki w px
@@ -1176,15 +1199,16 @@ int main()
 	grunio[1].x = resX / 2;
 	grunio[1].y = resY - 220;
 
-	Sprite marchewka;
+	Sprite marchewka[2];
 	Sprite tlo;
 	Sprite pauza;
-	Sprite zycie[5];
+	Sprite zycie[2][5];
 	Sprite marchewkawziemi[1000];
 	Texture txt_pusty;
 	Texture txt_marchewkawziemi[3];
 	Texture txt_tlo;
 	Texture txt_marchewka[3];
+	Texture txt_marchewka2[3];
 	Texture txt_grunio2[3];
 	Texture txt_pauza;
 	Texture txt_zycie;
@@ -1225,33 +1249,51 @@ int main()
 	text_gameover.setFillColor(Color(255, 0, 0, 0));
 	wycentrujtext(text_gameover, resX, resY, skalaY, 0);
 
-	Text text_zycia;
-	FloatRect rect_textzycia = text_zycia.getGlobalBounds();
-	text_zycia.setFont(font);
-	text_zycia.setCharacterSize(50*skalaY);
-	text_zycia.setStyle(Text::Bold);
-	text_zycia.setOrigin(rect_textzycia.left + rect_textzycia.width, rect_textzycia.top + rect_textzycia.height);
-	string string_text_zycia = to_string(zycia);
-	int znaki = string_text_zycia.size();
-	text_zycia.setPosition(resX - 220 - (znaki*(50 * skalaY)), 0);
+	Text text_zycia[2];
+	FloatRect rect_textzycia[2] = { text_zycia[0].getGlobalBounds() };
+	text_zycia[0].setFont(font);
+	text_zycia[0].setCharacterSize(50*skalaY);
+	text_zycia[0].setStyle(Text::Bold);
+	text_zycia[0].setOrigin(rect_textzycia[0].left + rect_textzycia[0].width, rect_textzycia[0].top + rect_textzycia[0].height);
+	string string_text_zycia[2] = { to_string(grunio[0].zycia) };
+	int znaki[2] = { string_text_zycia[0].size() };
+	text_zycia[0].setPosition(resX - 220 - (znaki[0]*(50 * skalaY)), 0);
+
+	if (multiplayer == 1)
+	{
+		rect_textzycia[1] = text_zycia[1].getGlobalBounds();
+		text_zycia[1].setFont(font);
+		text_zycia[1].setCharacterSize(40 * skalaY);
+		text_zycia[1].setStyle(Text::Bold);
+		text_zycia[1].setOrigin(rect_textzycia[1].left + rect_textzycia[1].width, rect_textzycia[1].top + rect_textzycia[1].height);
+		string_text_zycia[1] = to_string(grunio[1].zycia);
+		znaki[1] = string_text_zycia[1].size();
+		//text_zycia[0].setPosition(resX - 220 - (znaki[0] * (50 * skalaY)), 0);
+	}
 
 	Text przycisk_pauza_wyjscie;
 	Text przycisk_pauza_restart;
 	Text przycisk_pauza_wznow;
-	Text wynik;
+	Text wynik[2];
 	
-	wynik.setCharacterSize(50 * skalaY);
-	wynik.setFont(font);
-	wynik.setPosition(0, 0);
-	wynik.setStyle(Text::Italic);
-	wynik.setStyle(Text::Bold);
+	wynik[0].setCharacterSize(50 * skalaY);
+	wynik[0].setFont(font);
+	wynik[0].setPosition(0, 0);
+	wynik[0].setStyle(Text::Italic);
+	wynik[0].setStyle(Text::Bold);
 
-	string string_wynik;
+	wynik[1].setCharacterSize(40 * skalaY);
+	wynik[1].setFont(font);
+	wynik[1].setPosition(0, wynik[0].getGlobalBounds().height + resX / 30);
+	wynik[1].setStyle(Text::Italic);
+	wynik[1].setStyle(Text::Bold);
+
+	string string_wynik[2];
 
 	grunio[0].sprite.setOrigin(grsizeX / 2, grsizeY / 2);
 	grunio[1].sprite.setOrigin(grsizeX / 2, grsizeY / 2);
-	float marchX = 0;
-	float marchY = 0;
+	float marchX[2] = { 0,0 };
+	float marchY[2] = { 0,0 };
 	txt_tlo.loadFromFile("images/tlo.png");
 	txt_marchewka[0].loadFromFile("images/marchewka_cz.png");
 	txt_marchewka[1].loadFromFile("images/marchewka_zi.png");
@@ -1266,20 +1308,29 @@ int main()
 	txt_marchewkawziemi[0].loadFromFile("images/marchewkawziemi_cz.png");
 	txt_marchewkawziemi[1].loadFromFile("images/marchewkawziemi_zi.png");
 	txt_marchewkawziemi[2].loadFromFile("images/marchewkawziemi_ni.png");
+	txt_marchewka2[0].loadFromFile("images/marchewka2_cz.png");
+	txt_marchewka2[1].loadFromFile("images/marchewka2_zi.png");
+	txt_marchewka2[2].loadFromFile("images/marchewka2_ni.png");
 	txt_zycie.loadFromFile("images/zycie.png");
 	txt_pusty.loadFromFile("images/pusty.png");
 	for (int i = 0; i < 5; i++)
 	{
-		zycie[i].setTexture(txt_zycie);
-		zycie[i].setPosition(resX - ((105 + 5)*(i + 1)*skalaX),0);
-		zycie[i].setScale(skalaX / 1.5, skalaY / 1.5);
+		zycie[0][i].setTexture(txt_zycie);
+		zycie[0][i].setPosition(resX - ((105 + 5)*(i + 1)*skalaX),0);
+		zycie[0][i].setScale(skalaX / 1.5, skalaY / 1.5);
+		zycie[1][i].setTexture(txt_zycie);
+		zycie[1][i].setPosition(resX - ((105 + 5)*(i + 1)*skalaX), zycie[0][i].getGlobalBounds().height + resX / 30 - zycie[1][i].getGlobalBounds().height/2);
+		zycie[1][i].setScale(skalaX / 1.7, skalaY / 1.7);
 	}
 	pauza.setTexture(txt_pauza);
 	tlo.setTexture(txt_tlo);
-	grunio[0].sprite.setTexture(grunio[0].textura[grkolor]);
+
+	marchewka[1].setTexture(txt_marchewka2[0]);
+
+	grunio[0].sprite.setTexture(grunio[0].textura[grunio[0].kolor]);
 	grunio[0].sprite.setPosition(grunio[0].x, grunio[0].y);
 
-	grunio[1].sprite.setTexture(grunio[1].textura[grkolor]);
+	grunio[1].sprite.setTexture(grunio[1].textura[grunio[1].kolor]);
 	grunio[1].sprite.setPosition(grunio[1].x, grunio[1].y);
 
 	string string_pauza_wznow = "Wznow";
@@ -1312,11 +1363,13 @@ int main()
 
 	tlo.setOrigin(0, 1080);
 	tlo.setPosition(0, resY);
-	marchewka.setOrigin(marchsizeX / 2, marchsizeY);
-	plik(resX, resY, fullscreen, maxfps, vsync, 0, 1, predkoscmarchewki, przyspieszanie, maxprmarchewki, tworzyc);
+	marchewka[0].setOrigin(marchsizeX / 2, marchsizeY);
+	marchewka[1].setOrigin(marchsizeX / 2, marchsizeY);
+	plik(resX, resY, fullscreen, maxfps, vsync, 0, 1, predkoscmarchewki[0], przyspieszanie, maxprmarchewki, tworzyc);
 	grunio[0].sprite.setScale(skalaX, skalaX);
 	grunio[1].sprite.setScale(skalaX, skalaY);
-	marchewka.setScale(skalaX, skalaX);
+	marchewka[0].setScale(skalaX, skalaX);
+	marchewka[1].setScale(skalaX, skalaX);
 	wycentrujsprite(pauza, resX, resY, skalaY, skalaX, 0);
 	pauza.setScale(skalaX, skalaX);
 	tlo.setScale(skalaX, skalaX);
@@ -1325,6 +1378,9 @@ int main()
 	przyspieszanie = przyspieszanie * skalaY;
 	grunio[0].y = grunio[0].y + (220 - (220 * skalaY));
 	grunio[1].y = grunio[1].y + (220 - (220 * skalaY));
+
+	marchewka[0].setTexture(txt_marchewka[0]);
+	grunio[0].sprite.setTexture(grunio[0].textura[0]);
 
 	short tickratetime = 50;
 
@@ -1372,23 +1428,49 @@ int main()
 			}
 			if (pause == 0)
 			{
-				if (zdarzenie.type == zdarzenie.KeyPressed && zdarzenie.key.code == Keyboard::E)
+				if (multiplayer == 0)
 				{
-					zmienkolor(grunio[0].sprite, grunio[0].textura, grkolor, mchkolor, 1);
+					if (zdarzenie.type == zdarzenie.KeyPressed && zdarzenie.key.code == Keyboard::E)
+					{
+						zmienkolor(grunio[0].sprite, grunio[0].textura, grunio[0].kolor, mchkolor[0], 1);
+					}
+					if (zdarzenie.type == zdarzenie.KeyPressed && zdarzenie.key.code == Keyboard::R)
+					{
+						zmienkolor(grunio[0].sprite, grunio[0].textura, grunio[0].kolor, mchkolor[0], 0);
+					}
+					if (zdarzenie.type == zdarzenie.KeyPressed && zdarzenie.key.code == Keyboard::P)
+					{
+						klatka = 50;
+					}
 				}
-				if (zdarzenie.type == zdarzenie.KeyPressed && zdarzenie.key.code == Keyboard::R)
+				else
 				{
-					zmienkolor(grunio[0].sprite, grunio[0].textura, grkolor, mchkolor, 0);
+					if (zdarzenie.type == zdarzenie.KeyPressed && zdarzenie.key.code == Keyboard::Period)
+					{
+						zmienkolor(grunio[0].sprite, grunio[0].textura, grunio[0].kolor, mchkolor[0], 1);
+					}
+					if (zdarzenie.type == zdarzenie.KeyPressed && zdarzenie.key.code == Keyboard::Slash)
+					{
+						zmienkolor(grunio[0].sprite, grunio[0].textura, grunio[0].kolor, mchkolor[0], 0);
+					}
+					if (zdarzenie.type == zdarzenie.KeyPressed && zdarzenie.key.code == Keyboard::R)
+					{
+						zmienkolor(grunio[1].sprite, grunio[1].textura, grunio[1].kolor, mchkolor[1], 1);
+					}
+					if (zdarzenie.type == zdarzenie.KeyPressed && zdarzenie.key.code == Keyboard::T)
+					{
+						zmienkolor(grunio[1].sprite, grunio[1].textura, grunio[1].kolor, mchkolor[1], 0);
+					}
 				}
-				if (zdarzenie.type == zdarzenie.KeyPressed && zdarzenie.key.code == Keyboard::P)
-				{
-					klatka = 50;
-				}
+					
 			}
 		}
-		string_text_zycia = to_string(zycia);
-		znaki = string_text_zycia.size();
-		text_zycia.setPosition(resX - 110 - ((znaki+1)*(29 * skalaY)), 0);
+		string_text_zycia[0] = to_string(grunio[0].zycia);
+		string_text_zycia[1] = to_string(grunio[1].zycia);
+		znaki[0] = string_text_zycia[0].size();
+		znaki[1] = string_text_zycia[1].size();
+		text_zycia[0].setPosition(resX - 110 - ((znaki[0] + 1)*(29 * skalaY)), 0);
+		text_zycia[1].setPosition(resX - 110 - ((znaki[1] + 1)*(29 * skalaY)), text_zycia[0].getGlobalBounds().height + resX / 30 - text_zycia[1].getGlobalBounds().height / 2);
 		if (pause == 0)
 		{
 			if (Keyboard::isKeyPressed(Keyboard::Right))
@@ -1401,6 +1483,19 @@ int main()
 				grunio[0].sprite.setScale(-skalaX, skalaY);
 				grunio[0].x = grunio[0].x - (predkoscgr*czas.asMilliseconds());
 			}
+			if (multiplayer == 1)
+			{
+				if (Keyboard::isKeyPressed(Keyboard::A))
+				{
+					grunio[1].sprite.setScale(-skalaX, skalaY);
+					grunio[1].x -= predkoscgr * czas.asMilliseconds();
+				}
+				if (Keyboard::isKeyPressed(Keyboard::D))
+				{
+					grunio[1].sprite.setScale(skalaX, skalaY);
+					grunio[1].x += predkoscgr * czas.asMilliseconds();
+				}
+			}
 		}
 		zegar.restart().asSeconds();
 		if (grunio[0].x < 0+(grsizeX/2)*skalaX) grunio[0].x = 0+(grsizeX/2)*skalaX;
@@ -1409,54 +1504,96 @@ int main()
 		if (grunio[1].x > resX - (grsizeX / 2 * skalaX)) grunio[1].x = resX - (grsizeX / 2 * skalaX);
 		if (pause == 0)
 		{
-			stworzmarchewke(marchewka, skalaX, skalaY, txt_marchewka, grunio[0].x, stworzona, resX, marchX, marchY, predkoscmarchewki, mchkolor);
-			if (sprawdzczyzjedzona(marchewka, grunio[0].sprite, stworzona, marchY, predkoscmarchewki, przyspieszanie, maxprmarchewki, grkolor, mchkolor, punkty, ciag))
-			{
-				zjedzona = 1;
-				dzwiek_zebraniemarchewki.play();
-				grXt = grunio[0].x;
-			}
-			if (sprawdzmarchewke(marchewka, skalaY, stworzona, marchY, resY, marchsizeY, predkoscmarchewki, przyspieszanie, maxprmarchewki, mchkolor, grkolor, ciag, ktoram, marchewkawziemi[ktoram], txt_marchewkawziemi, zycia))
-			{
-				dzwiek_marchewkauciekla.play();
-				klatka = 60;
-			}
-			ruszmarchewke(marchewka, skalaX, skalaY, stworzona, marchX, marchY, predkoscmarchewki, zegar, czas);
-			if (zjedzona == 1)
-			{
-				wyswietlzdobytepunkty(ciag, text_punktynadgr, klatkaanimacji_punktynadgr, maxfps, zjedzona, grXt, grunio[0].y, skalaX, skalaY);
-			}
-			pokazzycia(zycie, zycia, txt_zycie, txt_pusty, text_zycia);
-			sprawdzciag(ciag, zycia);
-			if (sprawdzczyzginales(zycia, stworzona, grunio[0].sprite, muzyka, klatkaanimacji_smierc, maxfps, grunio[0].y, grunio[0].x, grXt, text_gameover, klatkaanimacji_gameover, resY) == 1)
-			{
-				if (punkty > maxscore)
+				stworzmarchewke(marchewka[0], skalaX, skalaY, txt_marchewka, grunio[0].x, stworzona[0], resX, marchX[0], marchY[0], predkoscmarchewki[0], mchkolor[0]);
+				if (sprawdzczyzjedzona(marchewka[0], grunio[0].sprite, stworzona[0], marchY[0], predkoscmarchewki[0], przyspieszanie, maxprmarchewki, grunio[0].kolor, mchkolor[0], grunio[0].punkty, ciag[0]))
 				{
-					ofstream plikmscore;
-					plikmscore.open("images/wynik.png");
-					plikmscore << punkty;
-					plikmscore.close();
+					zjedzona[0] = 1;
+					dzwiek_zebraniemarchewki.play();
+					grunio[0].xt = grunio[0].x;
 				}
-				grunio[0].x = resX / 2;
-				grunio[0].sprite.setRotation(0);
-				grunio[0].y = resY - 220;
-				grunio[0].y = grunio[0].y + (220 - (220 * skalaY));
-				punkty = 0;
-				ciag = 0;
-				zycia = 3;
-				stworzona = 0;
-				pause = 0;
-				muzyka.play();
-				klatkaanimacji_gameover = 0;
-				klatkaanimacji_smierc = 0;
-				klatkaanimacji_punktynadgr = 0;
+				if (sprawdzmarchewke(marchewka[0], skalaY, stworzona[0], marchY[0], resY, marchsizeY, predkoscmarchewki[0], przyspieszanie, maxprmarchewki, mchkolor[0], grunio[0].kolor, ciag[0], ktoram, marchewkawziemi[ktoram], txt_marchewkawziemi, grunio[0].zycia))
+				{
+					dzwiek_marchewkauciekla.play();
+					klatka = 60;
+				}
+				ruszmarchewke(marchewka[0], skalaX, skalaY, stworzona, marchX[0], marchY[0], predkoscmarchewki[0], zegar, czas);
+				if (zjedzona[0] == 1)
+				{
+					wyswietlzdobytepunkty(ciag[0], text_punktynadgr, klatkaanimacji_punktynadgr, maxfps, zjedzona[0], grunio[0].xt, grunio[0].y, skalaX, skalaY);
+				}
+				sprawdzciag(ciag[0], grunio[0].zycia);
+				if (sprawdzczyzginales(grunio[0].zycia, stworzona[0], grunio[0].sprite, muzyka, klatkaanimacji_smierc, maxfps, grunio[0].y, grunio[0].x, grunio[0].xt, text_gameover, klatkaanimacji_gameover, resY, zegaranimacjismierci[0], czasanimacjismierci[0], czasanimacjismiercisuma) == 1)
+				{
+					if (grunio[0].punkty > maxscore)
+					{
+						ofstream plikmscore;
+						plikmscore.open("images/wynik.png");
+						plikmscore << grunio[0].punkty;
+						plikmscore.close();
+					}
+					grunio[0].x = resX / 2;
+					grunio[0].sprite.setRotation(0);
+					grunio[0].y = resY - 220;
+					grunio[0].y = grunio[0].y + (220 - (220 * skalaY));
+					grunio[0].punkty = 0;
+					ciag[0] = 0;
+					grunio[0].zycia = 3;
+					stworzona[0] = 0;
+					pause = 0;
+					muzyka.play();
+					klatkaanimacji_gameover = 0;
+					klatkaanimacji_smierc = 0;
+					klatkaanimacji_punktynadgr = 0;
+				}
+				if (multiplayer == 1)
+				{
+					stworzmarchewke(marchewka[1], skalaX, skalaY, txt_marchewka2, grunio[1].x, stworzona[1], resX, marchX[1], marchY[1], predkoscmarchewki[1], mchkolor[1]);
+					if (sprawdzczyzjedzona(marchewka[1], grunio[1].sprite, stworzona[1], marchY[1], predkoscmarchewki[1], przyspieszanie, maxprmarchewki, grunio[1].kolor, mchkolor[1], grunio[1].punkty, ciag[1]))
+					{
+						zjedzona[1] = 1;
+						dzwiek_zebraniemarchewki.play();
+						grunio[1].xt = grunio[1].x;
+					}
+					if (sprawdzmarchewke(marchewka[1], skalaY, stworzona[1], marchY[1], resY, marchsizeY, predkoscmarchewki[1], przyspieszanie, maxprmarchewki, mchkolor[1], grunio[1].kolor, ciag[1], ktoram, marchewkawziemi[ktoram], txt_marchewkawziemi, grunio[1].zycia))
+					{
+						dzwiek_marchewkauciekla.play();
+						klatka = 60;
+					}
+					ruszmarchewke(marchewka[1], skalaX, skalaY, stworzona, marchX[1], marchY[1], predkoscmarchewki[1], zegar, czas);
+					if (zjedzona[1] == 1)
+					{
+						wyswietlzdobytepunkty(ciag[1], text_punktynadgr, klatkaanimacji_punktynadgr, maxfps, zjedzona[1], grunio[1].xt, grunio[1].y, skalaX, skalaY);
+					}
+					sprawdzciag(ciag[1], grunio[1].zycia);
+					if (sprawdzczyzginales(grunio[1].zycia, stworzona[1], grunio[1].sprite, muzyka, klatkaanimacji_smierc, maxfps, grunio[1].y, grunio[1].x, grunio[1].xt, text_gameover, klatkaanimacji_gameover, resY, zegaranimacjismierci[0], czasanimacjismierci[0], czasanimacjismiercisuma) == 1)
+					{
+						grunio[1].x = resX / 2;
+						grunio[1].sprite.setRotation(0);
+						grunio[1].y = resY - 220;
+						grunio[1].y = grunio[1].y + (220 - (220 * skalaY));
+						grunio[1].punkty = 0;
+						ciag[1] = 0;
+						grunio[1].zycia = 3;
+						stworzona[1] = 0;
+						pause = 0;
+						muzyka.play();
+						klatkaanimacji_gameover = 0;
+						klatkaanimacji_smierc = 0;
+						klatkaanimacji_punktynadgr = 0;
+					}
+				}
+			pokazzycia(zycie[0], grunio[0].zycia, txt_zycie, txt_pusty, text_zycia[0]);
+			if (multiplayer == 1)
+			{
+				pokazzycia(zycie[1], grunio[1].zycia, txt_zycie, txt_pusty, text_zycia[1]);
 			}
 		}
 
 
-		grunio[0].sprite.setPosition(grunio[0].x, grunio[0].y);
-		grunio[1].sprite.setPosition(grunio[1].x, grunio[1].y);
-		wyswietlwynik(punkty, wynik, string_wynik);
+		//grunio[0].sprite.setPosition(grunio[0].x, grunio[0].y);
+		//grunio[1].sprite.setPosition(grunio[1].x, grunio[1].y);
+		wyswietlwynik(grunio[0].punkty, wynik[0], string_wynik[0]);
+		wyswietlwynik(grunio[1].punkty, wynik[1], string_wynik[1]);
 		if (zapauzowano == 1)
 		{
 			odpauzowac = przyciskipauzy(przycisk_pauza_wznow, przycisk_pauza_restart, przycisk_pauza_wyjscie, mysz, sieciowy);
@@ -1469,13 +1606,19 @@ int main()
 			if (odpauzowac == 2)
 			{
 				grunio[0].x = resX / 2;
-				punkty = 0;
-				ciag = 0;
-				zycia = 3;
-				stworzona = 0;
+				grunio[0].punkty = 0;
+				ciag[0] = 0;
+				grunio[0].zycia = 3;
+				stworzona[0] = 0;
 				muzyka.play();
 				odpauzowac = 0;
 				zapauzowano = 0;
+
+				grunio[1].x = resX / 2;
+				grunio[1].punkty = 0;
+				ciag[1] = 0;
+				grunio[1].zycia = 3;
+				stworzona[1] = 0;
 			}
 			if (odpauzowac == 3)
 			{
@@ -1508,50 +1651,55 @@ int main()
 		else
 			widok.setCenter(resX / 2, resY / 2);
 
-		ticktime = tickrate.getElapsedTime();
+		//ticktime = tickrate.getElapsedTime();
 		
-		if ((sieciowy == 1) && (ticktime.asMilliseconds() > 50 ))
+		/*if ((sieciowy == 1) && (ticktime.asMilliseconds() > tickratetime ))
 		{
 			Packet packet;
 			packet << grunio[0].x;
 			socket.send(packet, ipservera, portudpupload);
 			packet.clear();
 			socket.receive(packet, ipservera, portudpdownload);
-			cout << "UserID: " << userid << endl;
 			if (userid == 0)
 			{
-				packet >> przeciwnikjestwgrze >> czyjestwgrze >> grunio[0].x >> grunio[1].x;
+				packet >> przeciwnikjestwgrze >> czyjestwgrze >> grunio[0].x >> grunio[1].x >> pause >> marchX[0] >> marchX[1] >> marchY[0] >> marchY[1] >> mchkolor[0] >> mchkolor[1] >> grunio[0].y >> punkty[0] >> punkty[1];
 			}
 			else
-				packet >> przeciwnikjestwgrze >> czyjestwgrze >> grunio[1].x >> grunio[0].x;
+				packet >> przeciwnikjestwgrze >> czyjestwgrze >> grunio[1].x >> grunio[0].x >> pause >> marchX[1] >> marchX[0] >> marchY[1] >> marchY[0] >> mchkolor[1] >> mchkolor[0] >> grunio[0].y >> punkty[1] >> punkty[0];
 
-			packet >> pause >> marchX >> marchY >> mchkolor;
 
-			grunio[0].sprite.setPosition(grunio[0].x, grunio[0].y);
-			grunio[1].sprite.setPosition(grunio[1].x, grunio[1].y);
+			
 			tickrate.restart();
 			if (przeciwnikjestwgrze == 1)
 			{
 				przeciwnikbylwgrze = 1;
 			}
-		}
-
+		}*/
+		grunio[0].sprite.setPosition(grunio[0].x, grunio[0].y);
+		grunio[1].sprite.setPosition(grunio[1].x, grunio[0].y);
+		marchewka[0].setPosition(marchX[0], marchY[0]);
+		marchewka[1].setPosition(marchX[1], marchY[1]);
+		//cout << "Gr0: " << grunio[0].x << "," << grunio[0].y << " Gr1: " << grunio[1].x << "," << grunio[1].y << endl;
 		okno.clear(Color(0,0,0));
 		okno.draw(tlo);
 		if (multiplayer == 1)
 		{
 			okno.draw(grunio[1].sprite);
+			okno.draw(marchewka[1]);
 		}
 		okno.draw(grunio[0].sprite);
-		okno.draw(marchewka);
+		okno.draw(marchewka[0]);
 		okno.draw(text_punktynadgr);
-		okno.draw(text_zycia);
+		okno.draw(text_zycia[0]);
+		if(multiplayer == 1) okno.draw(text_zycia[1]);	
 		okno.draw(text_gameover);
 		for (int i = 0; i < 5; i++)
 		{
-			okno.draw(zycie[i]);
+			okno.draw(zycie[0][i]);
+			if(multiplayer == 1) okno.draw(zycie[1][i]);
 		}
-		okno.draw(wynik);
+		okno.draw(wynik[0]);
+		if (multiplayer == 1) okno.draw(wynik[1]);
 		for (int i = 0; i <= ktoram; i++)
 		{
 			okno.draw(marchewkawziemi[i]);
